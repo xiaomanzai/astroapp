@@ -1,0 +1,60 @@
+---
+// src/components/RetroBackground.astro
+---
+<canvas id="retro-bg" class="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none"></canvas>
+
+<script>
+  // 这里放入原生 HTML 中的 Canvas 逻辑，但删掉了 drawUI 的部分
+  const canvas = document.getElementById('retro-bg') as HTMLCanvasElement;
+  const ctx = canvas.getContext('2d');
+
+  if (ctx) {
+      let width: number, height: number, time = 0;
+
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+      }
+
+      function drawGrid() {
+        if (!ctx) return; // Add null check for ctx
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)'; // 稍微调亮一点以适应网页内容
+        ctx.lineWidth = 1;
+        const gridSize = 40;
+        const offsetY = (time * 10) % gridSize;
+
+        // ...这里保留原有的画线循环...
+        for (let x = 0; x < width; x += gridSize) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
+        }
+        for (let y = -gridSize; y < height; y += gridSize) {
+          ctx.beginPath(); ctx.moveTo(0, y + offsetY); ctx.lineTo(width, y + offsetY); ctx.stroke();
+        }
+      }
+
+      function drawScanlines() {
+        if (!ctx) return; 
+        ctx.fillStyle = "rgba(18, 16, 16, 0.1)";
+        for (let i = 0; i < height; i += 4) {
+          ctx.fillRect(0, i, width, 1);
+        }
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        time += 0.05;
+        if (!ctx) return;
+        ctx.clearRect(0, 0, width, height);
+
+        // 背景色改由 CSS 控制，这里只画特效
+        drawGrid();
+        drawScanlines();
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+      animate();
+  }
+</script>

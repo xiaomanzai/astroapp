@@ -1,0 +1,34 @@
+---
+// src/pages/index.astro
+import Layout from '../layouts/Layout.astro';
+import RetroBackground from '../components/RetroBackground.astro';
+import RetroCard from '../components/RetroCard.jsx'; // 引入 React 组件
+
+// 模拟数据（在真实项目中，这里会从 Markdown 文件读取）
+const posts = [
+  { title: "Hello World", date: "2025-10-01", desc: "Astro makes components easy." },
+  { title: "Zero JS", date: "2025-10-05", desc: "Why render static HTML is better." }
+];
+---
+
+<Layout title="Retro Blog">
+  <!-- 1. 背景层 -->
+  <RetroBackground />
+
+  <!-- 2. 内容层 -->
+  <main class="relative z-10 container mx-auto px-4 py-10 max-w-2xl">
+    <!-- Header -->
+    <header class="text-center mb-16 border-b-4 border-[#2f2f2f] bg-[#ff6b6b] p-8">
+      <h1 class="text-white text-3xl mb-2 drop-shadow-[4px_4px_0_#2f2f2f]">RETRO BLOG</h1>
+      <p class="text-[#2f2f2f] text-sm mt-4 bg-white inline-block px-2 py-1">Welcome to the retro zone</p>
+    </header>
+
+    <!-- Post List -->
+    <div class="space-y-6">
+      {posts.map(post => (
+        <!-- client:visible 意味着只有当用户滚动到这个组件时，才会加载 React JS -->
+        <RetroCard client:visible {...post} />
+      ))}
+    </div>
+  </main>
+</Layout>

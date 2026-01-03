@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Blog 8-bit Concept</title>
+    <!-- 引入像素字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #222; /* 网页背景深灰 */
+            overflow: hidden;
+            font-family: 'Press Start 2P', cursive;
+        }
+        canvas {
+            display: block;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div id="loading">SYSTEM LOADING...</div>
+<canvas id="canvas"></canvas>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const loading = document.getElementById('loading');
+
+    // --- 配置参数 ---
+    const COLORS = {
+        bg: '#f3e5d0',       // 复古米色背景
+        primary: '#ff6b6b',  // 红色主色
+        secondary: '#4ecdc4',// 青色辅色
+        dark: '#2f2f2f',     // 深色边框/文字
+        light: '#ffffff',    // 纯白高光
+        shadow: '#888888'    // 阴影
+    };
+
+    let width, height;
+    let mouse = { x: 0, y: 0, down: false };
+    let fontLoaded = false;
+    let time = 0;
+
+    // --- 模拟博客数据 ---
+    const blogPosts = [
+        { id: 1, title: "Hello World", date: "2025-10-01", desc: "My first post in the 8-bit world." },
+        { id: 2, title: "Learning React", date: "2025-10-05", desc: "Why components are like LEGOs." },
+        { id: 3, title: "Pixel Art 101", date: "2025-10-12", desc: "Drawing with squares is fun!" },
+    ];
+
+    // UI 元素存储
+    let uiElements = [];
+
+    // --- 初始化 ---
+    document.fonts.ready.then(() => {
+        fontLoaded = true;
+        loading.style.display = 'none';
+        resize();
+        animate();
+    });
+
+    window.addEventListener('resize', resize);
+    window.addEventListener('mousemove', e => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+    });
+    window.addEventListener('mousedown', () => mouse.down = true);
+    window.addEventListener('mouseup', () => mouse.down = false);
+
+    function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        initUI(); // 重新计算 UI 布局
+    }
+
+    // --- 绘图辅助函数 (Retro UI 核心) ---
+    
+    // 绘制复古矩形（带硬边框和硬阴影）
+    function drawRetroRect(x, y, w, h, color, isHovered = false, isPressed = false) {
+        const border = 4; // 边框粗细
+        const offset = isPressed ? 0 : 6; // 阴影偏移量
+        
+        // 1. 绘制阴影 (如果是按下状态，阴影消失)
+        if (!isPressed) {
+            ctx.fillStyle = COLORS.dark;
+            ctx.fillRect(x + offset, y + offset, w, h);
+        }
+
+        // 2. 绘制主体背景 (按下时，主体向右下移动)
+        const shift = isPressed ? offset : 0;
+        ctx.fillStyle = color;
+        ctx.fillRect(x + shift, y + shift, w, h);
+
+        // 3. 绘制粗边框
+        ctx.lineWidth = border;
+        ctx.strokeStyle = COLORS.dark;
+        ctx.strokeRect(x + shift, y + shift, w, h);
+
+        // 4. 内部高光 (可选，增加立体感)
+        if (!isPressed && isHovered) {
+            ctx.fillStyle = 'rgba(255,255,255,0.2)';
+            ctx.fillRect(x + shift, y + shift, w, h);
+        }
+    }
+
+    // 绘制像素文字
+    function drawText(text, x, y, size, color = COLORS.dark, align = 'left') {
+        ctx.fillStyle = color;
+        ctx.font = `${size}px "Press Start 2P"`;
+        ctx.textAlign = align;
+        ctx.textBaseline = 'top';
+        ctx.fillText(text, x, y);
+    }
+
+    // --- 布局逻辑 ---
+    function initUI() {
+        uiElements = [];
+
+        // 导航栏按钮
+        const navItems = ['Home', 'About', 'Github'];
+        navItems.forEach((item, index) => {
+            uiElements.push({
+                type: 'button',
+                text: item,
+                x: width - 20 - (navItems.length - index) * 140, 
+                y: 30,
+                w: 120,
+                h: 50,
+                color: COLORS.light
+            });
+        });
+
+        // 博客卡片布局
+        const cardW = Math.min(600, width - 40);
+        const cardH = 120;
+        const startY = 250;
+
+        blogPosts.forEach((post, index) => {
+            uiElements.push({
+                type: 'card',
+                data: post,
+                x: (width - cardW) / 2,
+                y: startY + index * (cardH + 30),
+                w: cardW,
+                h: cardH,
+                color: COLORS.light
+            });
+        });
+    }
+
+    // --- 主循环 ---
+    function animate() {
+        requestAnimationFrame(animate);
+        time += 0.05;
+
+        // 1. 清空画布
+        ctx.fillStyle = COLORS.bg;
+        ctx.fillRect(0, 0, width, height);
+
+        // 2. 绘制动态网格背景
+        drawGrid();
+
+        // 3. 绘制顶部 Header 区域
+        ctx.fillStyle = COLORS.primary;
+        ctx.fillRect(0, 0, width, 100);
+        
+        ctx.beginPath();
+        ctx.moveTo(0, 100);
+        ctx.lineTo(width, 100);
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = COLORS.dark;
+        ctx.stroke();
+
+        // Logo
+        drawText("RETRO.LOG", 30, 35, 30, COLORS.light);
+        drawText("RETRO.LOG", 34, 39, 30, COLORS.dark); // 简单的文字阴影模拟
+
+        // 4. 绘制 Hero 标题
+        const heroText = "Welcome to the 8-Bit World";
+        const cursor = Math.floor(time * 2) % 2 === 0 ? " _" : "";
+        drawText(heroText + cursor, width/2, 150, width < 600 ? 16 : 24, COLORS.dark, 'center');
+
+
+        // 5. 绘制 UI 元素
+        uiElements.forEach(el => {
+            // 简单的碰撞检测
+            const isHovered = mouse.x > el.x && mouse.x < el.x + el.w &&
+                              mouse.y > el.y && mouse.y < el.y + el.h;
+            
+            const isPressed = isHovered && mouse.down;
+
+            if (el.type === 'button') {
+                drawRetroRect(el.x, el.y, el.w, el.h, el.color, isHovered, isPressed);
+                // 按钮文字居中计算
+                const shift = isPressed ? 6 : 0;
+                drawText(el.text, el.x + el.w/2 + shift, el.y + 18 + shift, 14, COLORS.dark, 'center');
+            } 
+            else if (el.type === 'card') {
+                // 卡片悬停时变成辅助色
+                const cardColor = isHovered ? '#e0f7fa' : el.color;
+                drawRetroRect(el.x, el.y, el.w, el.h, cardColor, isHovered, isPressed);
+                
+                const shift = isPressed ? 6 : 0;
+                const contentX = el.x + 20 + shift;
+                const contentY = el.y + 20 + shift;
+
+                // 绘制文章内容
+                drawText(el.data.title, contentX, contentY, 18, COLORS.primary);
+                drawText(el.data.date, el.x + el.w - 20 + shift, contentY, 12, '#666', 'right');
+                drawText(el.data.desc, contentX, contentY + 35, 12, COLORS.dark);
+                
+                // 绘制 "READ MORE" 提示
+                if (isHovered) {
+                     drawText(">> CLICK TO READ", el.x + el.w - 20 + shift, el.y + el.h - 30 + shift, 12, COLORS.secondary, 'right');
+                }
+            }
+        });
+
+        // 6. 绘制扫描线效果 (CRT Scanlines)
+        drawScanlines();
+    }
+
+    function drawGrid() {
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.lineWidth = 1;
+        const gridSize = 40;
+        // 简单的视差滚动效果
+        const offsetY = (time * 10) % gridSize;
+
+        for (let x = 0; x < width; x += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, height);
+            ctx.stroke();
+        }
+        for (let y = -gridSize; y < height; y += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(0, y + offsetY);
+            ctx.lineTo(width, y + offsetY);
+            ctx.stroke();
+        }
+    }
+
+    function drawScanlines() {
+        ctx.fillStyle = "rgba(18, 16, 16, 0.1)";
+        for (let i = 0; i < height; i += 4) {
+            ctx.fillRect(0, i, width, 1);
+        }
+        // 屏幕四周暗角 (Vignette) - 简单的径向渐变
+        const gradient = ctx.createRadialGradient(width/2, height/2, height/3, width/2, height/2, height);
+        gradient.addColorStop(0, "rgba(0,0,0,0)");
+        gradient.addColorStop(1, "rgba(0,0,0,0.4)");
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+    }
+
+</script>
+</body>
+</html>
