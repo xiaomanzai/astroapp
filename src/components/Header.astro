@@ -1,46 +1,16 @@
 ---
+import RetroButton from './RetroButton';
 ---
 <header class="w-full bg-[#ff6b6b] border-b-4 border-[#2f2f2f] px-8 flex flex-row items-center justify-between shadow-lg h-[100px] box-border">
   <h1 class="text-[#ffffff] text-3xl drop-shadow-[4px_4px_0_#2f2f2f] font-pixel tracking-widest">
-    RETRO.LOG
+    <slot></slot>
   </h1>
       <div class="flex gap-4">
-        <a
-        href="/"
-        class="/* 1. 基础样式：像素字体、粗边框、背景色 */
-    font-pixel text-xs px-4 py-2 bg-[#ff6b6b] text-white border-4 border-[#2f2f2f]
-    
-    /* 2. 复古阴影：使用自定义的任意值阴影 [x轴 y轴 模糊 扩展 颜色] */
-    /* 我们设置 4px 偏移，0 模糊，颜色为深色 */
-    shadow-[4px_4px_0_0_#2f2f2f]
-    
-    /* 3. 交互逻辑：过渡动画 */
-    transition-all duration-75
-    
-    /* 4. 悬停效果：向上微跳 */
-    hover:-translate-y-1 hover:shadow-[4px_8px_0_0_#2f2f2f]
-    
-    /* 5. 按压效果 (核心)：向右下移动 4px，阴影消失 */
-    active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
-      >
-        HOME
-      </a>
-      <!-- 关于按钮 (白色) -->
-      <a
-        href="/about"
-        class="font-pixel text-xs px-4 py-2 bg-white text-[#2f2f2f] border-4 border-[#2f2f2f]
-    shadow-[4px_4px_0_0_#2f2f2f]
-    transition-all duration-75
-    hover:-translate-y-1 hover:shadow-[4px_8px_0_0_#2f2f2f]
-    active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
-      >
-        ABOUT
-      </a>
+        <RetroButton href="/" variant="primary">
+          HOME
+        </RetroButton>
+        <RetroButton href="/about" variant="secondary">
+          ABOUT
+        </RetroButton>
       </div>
 </header>
-
-<style>
-  .font-pixel {
-    font-family: 'Press Start 2P', cursive;
-  }
-</style>
