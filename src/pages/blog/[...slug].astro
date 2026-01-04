@@ -19,9 +19,6 @@ const formattedDate = entry.data.date.toISOString().split('T')[0];
 
 <Layout title={entry.data.title}>
   
-  
-  
-
     <main class="w-full max-w-[800px] px-6 py-12">
       <!-- 文章头部卡片风格 -->
       <div class="bg-white border-4 border-[#2f2f2f] p-8 mb-10 shadow-[8px_8px_0px_0px_#2f2f2f]">
@@ -63,11 +60,13 @@ const formattedDate = entry.data.date.toISOString().split('T')[0];
     margin-left: 1.5rem;
     margin-bottom: 1.5rem;
   }
-  article code {
+  /* Inline code style */
+  article :not(pre) > code {
     background-color: #eee;
     padding: 0.2rem 0.4rem;
     font-family: monospace;
   }
+  /* Code block style - ensure no conflict with Shiki/Prism */
   article pre {
     background-color: #2f2f2f;
     color: #4ecdc4;
@@ -75,5 +74,10 @@ const formattedDate = entry.data.date.toISOString().split('T')[0];
     overflow-x: auto;
     margin-bottom: 1.5rem;
     border: 2px solid #000;
+  }
+  article pre code {
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
   }
 </style>
