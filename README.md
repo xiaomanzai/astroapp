@@ -1,43 +1,53 @@
-# Astro Starter Kit: Minimal
+# Astro Retro Blog 🚀
 
-```sh
-npm create astro@latest -- --template minimal
+这是一个基于 [Astro](https://astro.build/) 构建的具有独特 **8-bit 复古风格** 的个人博客网站。它结合了现代的前端技术栈与怀旧的像素艺术美学，通过 Canvas 动画和精心设计的 UI 组件，营造出一种经典的 CRT 显示器质感。
+
+## ✨ 特性
+
+- **复古美学**：基于 HTML5 Canvas 实现的动态 8-bit 背景（网格、扫描线、暗角效果）。
+- **现代架构**：采用 Astro 5.x 作为核心框架，利用其岛屿架构（Islands Architecture）实现极速加载。
+- **交互组件**：使用 React 19 构建具有悬浮特效的像素风卡片（RetroCard）和按钮。
+- **极速样式**：利用 Tailwind CSS 4 (Vite 插件版) 处理复杂的像素风边框和阴影。
+- **内容驱动**：通过 Astro Content Collections 管理 Markdown 文章，支持类型安全。
+
+## 🛠️ 技术栈
+
+- **框架**: [Astro 5.x](https://astro.build/)
+- **UI 库**: [React 19](https://react.dev/)
+- **样式**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **字体**: [Press Start 2P](https://fonts.google.com/specimen/Press+Start+2P) (Google Fonts)
+
+## 📁 项目结构
+
+- `src/pages/`: 页面路由（主页、博客列表、文章详情）。
+- `src/components/`: 
+    - `RetroBackground.astro`: 负责 Canvas 复古背景渲染。
+    - `RetroCard.jsx`: React 实现的交互式博客卡片。
+- `src/content/`: 存放 Markdown 博客内容。
+- `src/styles/global.css`: 全局 CSS 变量和 Tailwind 配置。
+
+## 🚀 快速开始
+
+### 环境要求
+- Node.js (建议最新 LTS 版本)
+
+### 安装与运行
+
+```bash
+# 安装依赖
+npm install
+
+# 启动开发服务器
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+本地预览地址：`http://localhost:4321`
 
-## 🚀 Project Structure
+## 📖 指南
 
-Inside of your Astro project, you'll see the following folders and files:
+- **撰写文章**：在 `src/content/blog/` 目录下添加新的 `.md` 文件即可自动同步至博客。
+- **样式定制**：在 `src/styles/global.css` 中可以调整复古颜色的主题色调。
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+---
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+*Made with 🕹️ and Astro.*
