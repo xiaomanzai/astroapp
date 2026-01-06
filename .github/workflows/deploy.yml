@@ -1,0 +1,20 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ] # 如果你的主分支叫 master，请修改这里
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install, build, and upload
+        uses: withastro/action@v3
+        # 如果你使用了 pnpm，该 Action 会自动检测并处理
